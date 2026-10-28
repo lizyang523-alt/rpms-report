@@ -1,0 +1,347 @@
+<!DOCTYPE html> <!-- 使用现代 HTML 标准，避免浏览器以旧规则渲染。 -->
+<html lang="zh-CN" data-theme="light" data-density="comfortable"> <!-- 声明中文和默认主题，让辅助工具与样式有明确依据。 -->
+<head> <!-- 把页面说明和样式集中起来，便于单文件保存。 -->
+  <meta charset="UTF-8"> <!-- 使用统一编码，避免中文注释和文案乱码。 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- 按设备宽度显示，让手机也能正常使用。 -->
+  <title>快捷指令 · 命令面板</title> <!-- 给浏览器标签一个容易识别的名称。 -->
+  <style> /* 内置全部样式，让文件离线打开也能显示完整效果。 */
+    :root { /* 集中定义设计变量，让调整视觉不需要理解组件内部。 */
+      color-scheme: light; /* 告诉浏览器使用浅色原生控件。 */
+      --color-page: #f4f6f8; /* 页面略带灰紫，帮助白色面板突出层次。 */
+      --color-surface: #ffffff; /* 用统一表面色保持卡片和面板一致。 */
+      --color-soft: #f6f5f9; /* 用较轻背景区分按钮、图标与内容。 */
+      --color-text: #242333; /* 使用柔和深色保证正文可读。 */
+      --color-muted: #727080; /* 让说明文字自然退到次要层级。 */
+      --color-border: #e9e7ef; /* 用轻边框界定区域，避免视觉过重。 */
+      --color-accent: #1e4aec; /* 使用一个主色统一交互提示。 */
+      --color-accent-soft: #ebf1ff; /* 为当前选项提供清晰但温和的背景。 */
+      --color-accent-border: #c9e5ff; /* 让选中项在浅背景中仍然有边界。 */
+      --color-on-accent: #ffffff; /* 为主按钮提供足够清晰的文字颜色。 */
+      --color-overlay: #201a351c; /* 保留底页轮廓，让弹层仍有上下文。 */
+      --color-shadow: #29204420; /* 把阴影颜色也作为主题的一部分管理。 */
+      --color-success: #218765; /* 用独立成功色表达操作已经完成。 */
+      --space-0: 0; /* 将零间距也统一成变量，方便识别布局规则。 */
+      --space-1: 4px; /* 最小间距用于细小标签和文字组合。 */
+      --space-2: 8px; /* 基础间距用于相邻控件。 */
+      --space-3: 12px; /* 中小间距用于列表和按钮内边距。 */
+      --space-4: 16px; /* 标准间距让内容保持呼吸感。 */
+      --space-5: 20px; /* 稍大的间距用于面板边缘。 */
+      --space-6: 24px; /* 分区间距用于卡片和页头。 */
+      --space-8: 32px; /* 大间距用于页面模块之间。 */
+      --space-10: 40px; /* 更大的间距用于页面容器。 */
+      --space-12: 48px; /* 留出标题与内容之间的视觉停顿。 */
+      --space-16: 64px; /* 为欢迎区域提供更充足的留白。 */
+      --radius-sm: 6px; /* 小圆角适合键帽等小元素。 */
+      --radius-md: 10px; /* 中圆角统一按钮和图标。 */
+      --radius-lg: 14px; /* 列表项用较大圆角保持亲和感。 */
+      --radius-xl: 22px; /* 面板采用更舒展的外轮廓。 */
+      --radius-pill: 999px; /* 胶囊圆角让标签不受文字长度影响。 */
+      --border-width: 1px; /* 统一边框粗细避免视觉不一致。 */
+      --focus-width: 2px; /* 单独设置焦点线，让键盘定位足够明显。 */
+      --panel-width: 620px; /* 限制面板宽度，让指令保持易于扫读。 */
+      --page-width: 1040px; /* 限制底页行宽，避免大屏过于分散。 */
+      --list-height: 350px; /* 长列表使用内部滚动，不把面板推离屏幕。 */
+      --empty-height: 290px; /* 空态和加载态保留足够空间，避免面板突然塌缩。 */
+      --icon-size: 38px; /* 统一图标占位，让每行文字对齐。 */
+      --spinner-size: 28px; /* 加载指示保持可见但不抢占内容。 */
+      --blur: 5px; /* 轻微模糊底页，帮助聚焦当前操作。 */
+      --shadow: var(--space-0) var(--space-6) var(--space-16) var(--color-shadow); /* 阴影也复用颜色和距离变量。 */
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; /* 使用系统字体，避免网络字体依赖。 */
+      --text-xs: 11px; /* 定义细小标签字号以保持一致。 */
+      --text-sm: 12px; /* 定义辅助信息字号以建立层级。 */
+      --text-md: 14px; /* 正文大小兼顾密度与可读性。 */
+      --text-lg: 16px; /* 搜索框使用足够大的字号，避免手机自动放大。 */
+      --text-xl: 22px; /* 图标与小标题共享较醒目的尺寸。 */
+      --tracking-brand: .02em; /* 将品牌字距集中配置，避免分散的间距数值。 */
+      --tracking-label: .16em; /* 标签字距统一管理，方便调整整体风格。 */
+      --tracking-heading: -.04em; /* 大标题略收紧字距，保持视觉凝聚。 */
+      --row-padding: var(--space-3); /* 用独立变量允许切换列表密度。 */
+    } /* 结束基础变量，后续样式只引用这些设计值。 */
+    :root[data-theme="dark"] { /* 通过根属性覆盖颜色，让深色模式无需重复布局。 */
+      color-scheme: dark; /* 原生滚动条和控件也跟随深色主题。 */
+      --color-page: #15141b; /* 深色底页比面板更暗，以保持层次。 */
+      --color-surface: #23222c; /* 面板略微提亮以区别背景。 */
+      --color-soft: #2c2b37; /* 次级表面继续保持低对比。 */
+      --color-text: #eeedf5; /* 避免纯白带来的强烈眩光。 */
+      --color-muted: #aaa6bd; /* 为深色说明文字保留足够对比度。 */
+      --color-border: #3a3749; /* 使用适合暗面的边界颜色。 */
+      --color-accent: #bcabff; /* 深色下提亮主色，确保提示清晰。 */
+      --color-accent-soft: #36304c; /* 用暗紫背景表达选中状态。 */
+      --color-accent-border: #66548f; /* 保留选中区域的明确边界。 */
+      --color-on-accent: #211936; /* 浅紫按钮搭配深色文字保持可读。 */
+      --color-overlay: #08061066; /* 深色遮罩降低底页干扰。 */
+      --color-shadow: #00000040; /* 深色主题需要更深的阴影。 */
+      --color-success: #79d9b5; /* 提亮成功提示以适配暗面。 */
+    } /* 主题只调整令牌，保持组件结构不变。 */
+    :root[data-density="compact"] { --row-padding: var(--space-2); } /* 通过一个变量实现紧凑密度，避免重复列表样式。 */
+    * { box-sizing: border-box; } /* 让边框和内边距包含在宽度内，避免布局溢出。 */
+    body { margin: var(--space-0); background: var(--color-page); color: var(--color-text); font: var(--text-md)/1.6 var(--font); } /* 页面基础样式完全依赖设计变量。 */
+    button, input { font: inherit; } /* 让表单控件继承字体，避免浏览器默认样式突兀。 */
+    button { cursor: pointer; } /* 明确提示按钮可以点击。 */
+    button:focus-visible, input:focus-visible { outline: var(--focus-width) solid var(--color-accent); outline-offset: var(--space-1); } /* 让只用键盘的人也能找到焦点。 */
+    button:disabled { cursor: wait; opacity: .5; } /* 加载时同时提供行为限制和视觉反馈。 */
+    .page { max-width: var(--page-width); margin: var(--space-0) auto; padding: var(--space-8) var(--space-6); } /* 居中底页并为小屏保留安全边距。 */
+    .topbar, .brand, .actions, .panel-heading, .search-row, .panel-footer, .key-hints { display: flex; align-items: center; gap: var(--space-2); } /* 复用横向对齐规则，减少重复定义。 */
+    .topbar, .panel-heading, .panel-footer { justify-content: space-between; } /* 让主要信息与操作自然分居两端。 */
+    .brand { font-weight: 700; letter-spacing: var(--tracking-brand); } /* 用字重区分品牌而不增加额外装饰。 */
+    .brand-mark, .option-icon { display: grid; place-items: center; width: var(--icon-size); height: var(--icon-size); flex-shrink: 0; border-radius: var(--radius-md); background: var(--color-soft); font-size: var(--text-xl); } /* 固定图标空间确保行内容对齐。 */
+    .brand-mark { background: var(--color-accent-soft); color: var(--color-accent); } /* 品牌标记与交互主色保持一致。 */
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border: var(--border-width) solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); } /* 通用按钮共用一套基础样式。 */
+    .button:hover:not(:disabled) { background: var(--color-soft); } /* 鼠标悬停时提供轻微反馈。 */
+    .button.primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-on-accent); padding: var(--space-3) var(--space-5); } /* 主操作用填充色提高可发现性。 */
+    .button.primary:hover { filter: brightness(.94); } /* 通过亮度反馈复用原色，避免引入额外颜色。 */
+    .hero { padding: var(--space-16) var(--space-0) var(--space-12); max-width: var(--panel-width); } /* 控制欢迎文字宽度，形成自然的阅读区域。 */
+    .eyebrow { color: var(--color-accent); font-size: var(--text-xs); letter-spacing: var(--tracking-label); font-weight: 700; } /* 小标签为页面建立简洁的视觉起点。 */
+    h1 { font-size: clamp(32px, 5vw, 52px); line-height: 1.2; letter-spacing: var(--tracking-heading); margin: var(--space-4) var(--space-0); } /* 标题随屏幕缩放，避免手机换行过碎。 */
+    .hero p { color: var(--color-muted); margin: var(--space-0) var(--space-0) var(--space-6); font-size: var(--text-lg); } /* 辅助说明与主要行动保留明确距离。 */
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); } /* 三张卡片提供底页上下文，避免弹层悬空。 */
+    .card { padding: var(--space-6); border: var(--border-width) solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); } /* 卡片复用统一表面与圆角变量。 */
+    .card h2 { font-size: var(--text-lg); margin: var(--space-3) var(--space-0) var(--space-1); } /* 卡片标题保持简洁紧凑。 */
+    .card p, .page-note { color: var(--color-muted); font-size: var(--text-sm); margin: var(--space-0); } /* 次要说明使用统一层级。 */
+    .page-note { margin-top: var(--space-8); } /* 用留白分隔操作说明与主体。 */
+    kbd { display: inline-block; min-width: var(--space-5); padding: var(--space-0) var(--space-1); border: var(--border-width) solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-soft); color: var(--color-muted); font: var(--text-xs)/1.6 var(--font); text-align: center; } /* 键帽帮助非技术用户识别快捷键。 */
+    .palette { width: min(var(--panel-width), calc(100% - var(--space-8))); max-height: calc(100dvh - var(--space-8)); padding: var(--space-0); border: var(--border-width) solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow); overflow: auto; } /* 原生对话框配合内部滚动保证小屏可达。 */
+    .palette::backdrop { background: var(--color-overlay); backdrop-filter: blur(var(--blur)); } /* 遮罩帮助聚焦面板，同时保留底页位置感。 */
+    .palette[data-state="closed"] { display: none; } /* 关闭状态直接由属性控制，便于检查组件状态。 */
+    .palette[size="sm"] { --panel-width: 460px; --icon-size: 30px; --text-md: 13px; --text-lg: 15px; --text-xl: 18px; } /* 小尺寸：只换挡 token，内部样式自动跟随。 */
+    .palette[size="lg"] { --panel-width: 760px; --icon-size: 46px; --text-md: 15px; --text-lg: 18px; --text-xl: 26px; } /* 大尺寸：同样的机制，无需改任何元素样式。 */
+    .panel-heading { padding: var(--space-4) var(--space-5) var(--space-3); } /* 标题栏与搜索区之间保持紧凑联系。 */
+    .panel-title { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); font-weight: 600; } /* 将标题和图形标记组织成一个清晰单元。 */
+    .panel-title span { color: var(--color-accent); font-size: var(--text-lg); } /* 小型主色标记帮助辨认面板。 */
+    .panel-heading .button { font-size: var(--text-sm); padding: var(--space-1) var(--space-2); } /* 次要按钮保持低调，突出搜索。 */
+    .search-row { margin: var(--space-0) var(--space-5) var(--space-4); padding: var(--space-3) var(--space-4); border: var(--border-width) solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-soft); } /* 把搜索图标和输入框整合为一个明确入口。 */
+    .search-row:focus-within { border-color: var(--color-accent-border); } /* 输入时强调容器边界，帮助定位当前操作。 */
+    .search-row kbd { flex-shrink: 0; white-space: nowrap; } /* 保持快捷键在同一行，避免被输入框挤成竖排。 */
+    .search-icon { font-size: var(--text-xl); color: var(--color-muted); } /* 搜索标记作为提示而不抢占文字。 */
+    #search { width: 100%; min-width: var(--space-0); padding: var(--space-0); border: none; outline: none; background: none; color: var(--color-text); font-size: var(--text-lg); } /* 让输入框融入容器，焦点由外框表达。 */
+    #search::placeholder { color: var(--color-muted); } /* 占位文案跟随主题，保持可读。 */
+    .list-meta { display: flex; justify-content: space-between; padding: var(--space-0) var(--space-6) var(--space-2); color: var(--color-muted); font-size: var(--text-xs); } /* 提供搜索上下文和数量，不干扰主要选项。 */
+    .results { max-height: var(--list-height); overflow-y: auto; padding: var(--space-0) var(--space-3) var(--space-3); } /* 列表在面板内滚动，标题和操作栏仍容易找到。 */
+    .option { display: flex; align-items: center; gap: var(--space-3); padding: var(--row-padding); margin-bottom: var(--space-1); border: var(--border-width) solid var(--color-surface); border-radius: var(--radius-lg); cursor: pointer; } /* 一整行都能点击，降低精确操作要求。 */
+    .option[data-state="selected"] { background: var(--color-accent-soft); border-color: var(--color-accent-border); } /* 选中样式只依据状态属性，鼠标键盘保持一致。 */
+    .option[data-state="selected"] .option-icon { background: var(--color-surface); color: var(--color-accent); } /* 图标随当前项强调，增加选中状态辨识度。 */
+    .option-copy { flex: 1; min-width: var(--space-0); } /* 让文本占据剩余空间，并允许窄屏换行。 */
+    .option-title { display: block; font-weight: 600; } /* 指令名称比说明更醒目，方便快速扫描。 */
+    .option-detail { display: block; color: var(--color-muted); font-size: var(--text-sm); } /* 说明明确执行结果，降低操作不确定性。 */
+    .option-tag { color: var(--color-muted); font-size: var(--text-xs); } /* 类型标签保持低权重。 */
+    .enter-hint { display: none; color: var(--color-accent); } /* 只为当前项显示确认提示，避免重复干扰。 */
+    .option[data-state="selected"] .enter-hint { display: inline; } /* 状态属性同步控制回车提示。 */
+    .option[data-state="selected"] .option-tag { display: none; } /* 选中后用操作提示替代分类标签。 */
+    .state-view { display: none; min-height: var(--empty-height); padding: var(--space-8) var(--space-6); text-align: center; align-content: center; justify-items: center; } /* 状态页默认隐藏，交由状态属性显示。 */
+    .state-view h2 { font-size: var(--text-lg); margin: var(--space-4) var(--space-0) var(--space-1); } /* 状态标题与图形保持适当距离。 */
+    .state-view p { color: var(--color-muted); margin: var(--space-0) var(--space-0) var(--space-4); overflow-wrap: anywhere; } /* 长查询文本也能换行，避免撑破面板。 */
+    .state-icon { font-size: var(--text-xl); color: var(--color-muted); background: var(--color-soft); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-5); } /* 空态使用轻量图形，不需要外部图片。 */
+    .spinner { width: var(--spinner-size); height: var(--spinner-size); border: var(--focus-width) solid var(--color-border); border-top-color: var(--color-accent); border-radius: var(--radius-pill); animation: spin .8s linear infinite; } /* 用原生 CSS 提供无需资源文件的加载反馈。 */
+    @keyframes spin { to { transform: rotate(360deg); } } /* 连续旋转表达正在等待。 */
+    .palette[data-state="loading"] .loading-view, .palette[data-state="empty"] .empty-view { display: grid; } /* 按面板状态只显示对应反馈。 */
+    .palette[data-state="loading"] .ready-view, .palette[data-state="empty"] .ready-view { display: none; } /* 加载和空态下隐藏旧结果，避免误操作。 */
+    .panel-footer { gap: var(--space-3); padding: var(--space-3) var(--space-5); border-top: var(--border-width) solid var(--color-border); color: var(--color-muted); font-size: var(--text-xs); flex-wrap: wrap; } /* 页脚展示键盘说明，并允许小屏自动换行。 */
+    .key-hints { flex-wrap: wrap; gap: var(--space-3); } /* 键盘提示随宽度流动，避免横向溢出。 */
+    .demo-bar { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-5); background: var(--color-soft); border-top: var(--border-width) solid var(--color-border); flex-wrap: wrap; } /* 将演示入口放在独立区域，便于查看各状态。 */
+    .demo-bar span { margin-right: auto; font-size: var(--text-xs); color: var(--color-muted); } /* 标明演示用途，避免与真实命令混淆。 */
+    .demo-bar .button { padding: var(--space-1) var(--space-2); font-size: var(--text-xs); } /* 演示按钮保持次要视觉层级。 */
+    .toast { position: fixed; inset: auto var(--space-4) var(--space-6); width: fit-content; max-width: calc(100% - var(--space-8)); margin: var(--space-0) auto; padding: var(--space-3) var(--space-5); border: var(--border-width) solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow); } /* 执行结果显示在底部，不打断后续操作。 */
+    .toast[data-state="hidden"] { display: none; } /* 提示也通过状态属性管理显示。 */
+    .toast::before { content: "✓ "; color: var(--color-success); } /* 成功标记帮助快速理解结果。 */
+    @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } .hero { padding-top: var(--space-10); } .panel-heading, .panel-footer, .demo-bar { padding-left: var(--space-4); padding-right: var(--space-4); } .option-tag { display: none; } } /* 小屏减少横向信息，保留完整操作能力。 */
+    @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } } /* 尊重减少动态效果的系统偏好，仍保留加载文字。 */
+  </style> <!-- 样式结束后再声明页面内容，让结构更容易查找。 -->
+</head> <!-- 页面元信息与可见内容分开，便于阅读。 -->
+<body> <!-- 页面内容和行为都放在同一个文件，方便直接打开。 -->
+  <main class="page"> <!-- 使用主内容语义，帮助辅助阅读工具定位。 -->
+    <header class="topbar"> <!-- 页头提供稳定的品牌和主题入口。 -->
+      <div class="brand"><span class="brand-mark" aria-hidden="true">⌘</span> 设计小站</div> <!-- 装饰符号不参与朗读，避免干扰名称。 -->
+      <button class="button" type="button" data-theme-toggle aria-pressed="false">切换深色</button> <!-- 即使面板关闭也能调整主题。 -->
+    </header> <!-- 页头结束，主体从下方开始。 -->
+    <section class="hero"> <!-- 欢迎区域说明组件的用途。 -->
+      <div class="eyebrow">LESS SEARCHING. MORE CREATING.</div> <!-- 简短标签建立轻量设计工具的氛围。 -->
+      <h1>想做什么，<br>即刻出发。</h1> <!-- 分行让核心文案更容易扫读。 -->
+      <p>一个入口，找到你的下一步。<br>搜索指令，让灵感不被操作打断。</p> <!-- 用自然语言解释命令面板，而不要求编程知识。 -->
+      <button class="button primary" id="open-palette" type="button">打开命令面板 <span aria-hidden="true">↗</span></button> <!-- 提供可发现的入口，避免用户必须记住快捷键。 -->
+    </section> <!-- 欢迎区域保持单一职责。 -->
+    <section class="cards" aria-label="使用方式"> <!-- 三个并列说明帮助第一次使用的人快速上手。 -->
+      <article class="card"><span class="eyebrow">01 / FIND</span><h2>输入，即可找到</h2><p>搜索“深色”“紧凑”或其他关键词。</p></article> <!-- 给出真实可搜索的词，降低试用门槛。 -->
+      <article class="card"><span class="eyebrow">02 / CHOOSE</span><h2>双手，不必离开键盘</h2><p>使用 ↑ ↓ 选择，用 Enter 执行。</p></article> <!-- 将键盘行为直接表达给使用者。 -->
+      <article class="card"><span class="eyebrow">03 / MAKE IT YOURS</span><h2>切换，适合你的状态</h2><p>试试深浅主题与不同列表密度。</p></article> <!-- 说明本示例里真正能执行的操作。 -->
+    </section> <!-- 使用说明在关闭面板后仍可查看。 -->
+    <p class="page-note">随时按 <kbd>⌘ / Ctrl</kbd> + <kbd>K</kbd> 打开面板 · 无需联网，即开即用</p> <!-- 说明平台快捷键和离线能力。 -->
+  </main> <!-- 底页结束，弹层独立于正文。 -->
+  <dialog class="palette" id="palette" size="md" data-state="closed" aria-labelledby="palette-title" data-loading-ms="800" data-placeholder="搜索指令，或试试“深色”…" data-empty-title="没有找到相关指令" data-open-on-start="true"> <!-- size="md" 是默认档；改成 "sm" 或 "lg" 试试整体缩放。 -->
+    <div class="panel-heading"> <!-- 顶栏同时提供名称和直接操作入口。 -->
+      <div class="panel-title" id="palette-title"><span aria-hidden="true">⌘</span> 快捷指令</div> <!-- 为对话框提供可朗读名称。 -->
+      <div class="actions"><button class="button" type="button" data-theme-toggle aria-pressed="false">切换深色</button><button class="button" id="close-palette" type="button" aria-label="关闭命令面板">关闭 <kbd>Esc</kbd></button></div> <!-- 在模态框内保留主题和关闭入口，确保鼠标用户也能操作。 -->
+    </div> <!-- 结束标题区，为搜索留出独立位置。 -->
+    <div class="search-row"> <!-- 搜索框是键盘操作的持续焦点。 -->
+      <span class="search-icon" aria-hidden="true">⌕</span> <!-- 搜索图形仅作装饰，输入框另有明确名称。 -->
+      <input id="search" type="text" role="combobox" aria-label="搜索指令" aria-autocomplete="list" aria-expanded="false" aria-controls="results" autocomplete="off" spellcheck="false" autofocus> <!-- 使用组合框语义向辅助工具表达输入与候选结果的关系。 -->
+      <kbd aria-hidden="true">⌘ K</kbd> <!-- 快捷键装饰帮助形成使用记忆。 -->
+    </div> <!-- 搜索容器结束，结果区独立切换状态。 -->
+    <div class="ready-view"> <!-- 有结果时显示正常列表区域。 -->
+      <div class="list-meta"><span id="list-label">建议操作</span><span id="result-count" role="status" aria-live="polite"></span></div> <!-- 结果数量变化以温和方式通知辅助工具。 -->
+      <div class="results" id="results" role="listbox" aria-label="可用指令"></div> <!-- 用脚本从同一份指令数据生成选项，避免维护重复内容。 -->
+    </div> <!-- 正常结果区与反馈状态互斥显示。 -->
+    <div class="state-view loading-view" role="status" aria-live="polite"><span class="spinner" aria-hidden="true"></span><h2>正在准备指令</h2><p>稍等片刻，马上就好。</p></div> <!-- 加载同时提供文字，避免仅靠动画传达信息。 -->
+    <div class="state-view empty-view" role="status" aria-live="polite"><span class="state-icon" aria-hidden="true">⌕</span><h2 id="empty-title">没有找到相关指令</h2><p id="empty-description"></p><button class="button" id="clear-search" type="button">清空搜索</button></div> <!-- 空态提供明确恢复入口，让用户不陷入死路。 -->
+    <footer class="panel-footer"><div class="key-hints"><span><kbd>↑</kbd> <kbd>↓</kbd> 选择</span><span><kbd>Enter</kbd> 执行</span><span><kbd>Esc</kbd> 关闭</span></div><span>让操作跟上想法 <span aria-hidden="true">✦</span></span></footer> <!-- 持续显示键盘说明，避免要求用户记忆。 -->
+    <div class="demo-bar"><span>状态体验</span><button class="button" id="demo-loading" type="button">模拟加载</button><button class="button" id="demo-empty" type="button">体验空态</button></div> <!-- 把异常状态变成可直接体验的演示，而非隐藏代码。 -->
+  </dialog> <!-- 原生对话框会阻止焦点进入被遮挡的底页。 -->
+  <div class="toast" id="toast" data-state="hidden" role="status" aria-live="polite"></div> <!-- 使用非阻塞通知反馈执行结果。 -->
+  <script> // 内置交互脚本，让单个文件具备完整行为。
+    const root = document.documentElement; // 保留主题根节点引用，避免重复查找。
+    const palette = document.querySelector('#palette'); // 用一个面板节点统一承载组件状态。
+    const search = document.querySelector('#search'); // 让搜索输入持续接收键盘导航。
+    const results = document.querySelector('#results'); // 将结果更新限制在列表内部。
+    const toast = document.querySelector('#toast'); // 复用同一个通知，避免多次执行产生堆叠。
+    const openButton = document.querySelector('#open-palette'); // 记录默认焦点返回位置，便于继续使用。
+    const loadingButton = document.querySelector('#demo-loading'); // 加载期间禁用重复触发入口。
+    let filtered = []; // 保存当前可见指令，让键盘与鼠标使用相同数据。
+    let selectedIndex = 0; // 只保存一个选中位置，避免出现多个当前项。
+    let loadingTimer; // 保存加载计时器，关闭后可以取消过期更新。
+    let toastTimer; // 保存通知计时器，保证新通知拥有完整展示时间。
+    let returnFocus = openButton; // 关闭后恢复焦点，避免键盘用户失去位置。
+    function setTheme(theme) { // 集中处理主题变化，让按钮和指令行为一致。
+      root.dataset.theme = theme; // 使用根属性切换变量，无需逐个修改元素颜色。
+      document.querySelectorAll('[data-theme-toggle]').forEach(button => { // 同步底页和面板中的主题按钮。
+        button.textContent = theme === 'dark' ? '切换浅色' : '切换深色'; // 文案描述下一步操作，避免含义不明。
+        button.setAttribute('aria-pressed', String(theme === 'dark')); // 向辅助工具表达深色模式是否开启。
+      }); // 完成全部主题入口的同步。
+    } // 主题逻辑保持独立，方便以后替换主题值。
+    const commands = [ // 想增删指令时只改这个数组，列表与搜索会自动更新。
+      { id: 'dark', icon: '☾', title: '切换到深色模式', detail: '柔和暗色，让灵感在夜间继续', keywords: '主题 外观 夜间 dark theme', category: '外观', run: () => setTheme('dark'), message: '已切换到深色模式' }, // 每条指令把显示信息与实际动作放在一起，避免错配。
+      { id: 'light', icon: '☼', title: '切换到浅色模式', detail: '明亮清爽，给创作一点阳光', keywords: '主题 外观 白天 light theme', category: '外观', run: () => setTheme('light'), message: '已切换到浅色模式' }, // 提供明确的浅色指令，搜索结果不依赖当前主题。
+      { id: 'compact', icon: '≡', title: '使用紧凑列表', detail: '减少行间留白，一眼看到更多', keywords: '密度 间距 compact', category: '布局', run: () => { root.dataset.density = 'compact'; }, message: '已使用紧凑列表，再次打开即可查看' }, // 用属性调整密度，让布局变化仍由 CSS 负责。
+      { id: 'comfortable', icon: '☷', title: '使用舒适列表', detail: '保留呼吸感，让每一步更从容', keywords: '密度 间距 comfortable', category: '布局', run: () => { root.dataset.density = 'comfortable'; }, message: '已使用舒适列表，再次打开即可查看' }, // 为密度变化提供可逆操作，方便反复比较。
+      { id: 'reset', icon: '↺', title: '恢复默认外观', detail: '回到浅色主题与舒适间距', keywords: '重置 默认 reset', category: '偏好', run: () => { setTheme('light'); root.dataset.density = 'comfortable'; }, message: '已恢复浅色主题与舒适间距' }, // 一次恢复所有示例偏好，方便重新体验。
+    ]; // 指令不访问网络，确保离线也可以真正执行。
+    function setState(state) { // 集中维护状态与无障碍属性，避免两者不同步。
+      palette.dataset.state = state; // CSS 通过这一属性决定显示列表、加载还是空态。
+      results.setAttribute('aria-busy', String(state === 'loading')); // 让辅助工具了解列表正在更新。
+      search.setAttribute('aria-expanded', String(state === 'ready')); // 只有实际展示候选列表时才声明展开。
+      loadingButton.disabled = state === 'loading'; // 防止反复点击导致加载时间不断重置。
+      if (state !== 'ready') search.removeAttribute('aria-activedescendant'); // 不让输入框引用已隐藏的选项。
+    } // 所有面板状态都经过同一入口更新。
+    function select(index, scroll = false) { // 将鼠标与键盘选择统一到一个函数。
+      if (!filtered.length) return; // 空列表没有可选项，提前结束避免无效访问。
+      selectedIndex = (index + filtered.length) % filtered.length; // 到达头尾时循环，方便连续导航。
+      Array.from(results.children).forEach((option, position) => { // 同步每一项的视觉状态和辅助语义。
+        const selected = position === selectedIndex; // 用单一判断保证只有一项处于选中状态。
+        option.dataset.state = selected ? 'selected' : 'idle'; // 明确使用状态属性控制选中样式。
+        option.setAttribute('aria-selected', String(selected)); // 向辅助工具说明当前选中项。
+      }); // 完成所有候选项同步。
+      const active = results.children[selectedIndex]; // 找到当前项以更新键盘焦点指向。
+      search.setAttribute('aria-activedescendant', active.id); // 输入焦点留在搜索框，同时朗读当前选项。
+      if (scroll) active.scrollIntoView({ block: 'nearest' }); // 键盘选择超出视区时只滚动必要距离。
+    } // 选择不直接执行，让用户可以安全浏览。
+    function makeText(className, text) { // 共用安全的文字节点创建方法，减少重复。
+      const element = document.createElement('span'); // 创建普通元素，避免拼接可执行的 HTML。
+      element.className = className; // 通过类名交给 CSS 管理外观。
+      element.textContent = text; // 将内容作为纯文字处理，避免特殊字符被解释成标签。
+      return element; // 返回节点供列表结构组合。
+    } // 小工具只负责文字节点，保持职责单一。
+    function render() { // 搜索、清空与加载结束都复用同一渲染流程。
+      if (!palette.open || palette.dataset.state === 'loading') return; // 关闭或加载期间不展示过期结果。
+      const query = search.value.trim().toLocaleLowerCase(); // 忽略大小写和首尾空格，让搜索更宽容。
+      const terms = query.split(/\s+/).filter(Boolean); // 支持多个关键词组合查找。
+      filtered = commands.filter(command => terms.every(term => `${command.title} ${command.detail} ${command.keywords}`.toLocaleLowerCase().includes(term))); // 名称、说明和别名共用搜索，降低记忆负担。
+      results.replaceChildren(); // 清理旧列表，避免搜索后留下不匹配的候选项。
+      document.querySelector('#list-label').textContent = query ? '搜索结果' : '建议操作'; // 用文案区分默认推荐和主动搜索。
+      document.querySelector('#result-count').textContent = `${filtered.length} 个指令`; // 显示数量帮助用户判断筛选效果。
+      document.querySelector('#empty-description').textContent = query ? `没有与“${search.value.trim()}”匹配的结果，换个关键词试试。` : '暂时没有可用指令。'; // 清楚说明为空的原因，且安全显示用户输入。
+      filtered.forEach((command, index) => { // 从指令数据生成对应结果，避免写死重复结构。
+        const option = document.createElement('div'); // 选项使用列表语义，键盘焦点由组合框统一管理。
+        option.className = 'option'; // 让所有指令共享基础外观。
+        option.id = `command-${command.id}`; // 用稳定且唯一的标识关联辅助焦点。
+        option.setAttribute('role', 'option'); // 告知辅助工具这是列表中的一个候选项。
+        const icon = makeText('option-icon', command.icon); // 把装饰图标和文字分开，便于主题调整。
+        icon.setAttribute('aria-hidden', 'true'); // 避免朗读装饰符号干扰指令名称。
+        const copy = makeText('option-copy', ''); // 使用独立容器承载名称和说明。
+        copy.append(makeText('option-title', command.title), makeText('option-detail', command.detail)); // 保持统一的两层文字结构。
+        const hint = makeText('enter-hint', '↵'); // 为选中项提供轻量回车提示。
+        hint.setAttribute('aria-hidden', 'true'); // 键盘说明已在页脚提供，无需重复朗读。
+        option.append(icon, copy, makeText('option-tag', command.category), hint); // 按图标、文字、提示的顺序建立阅读路径。
+        option.addEventListener('pointermove', () => select(index)); // 指针实际移动时才选择，避免滚动把键盘选择抢走。
+        option.addEventListener('click', () => execute(index)); // 点击即可执行，兼容触屏与鼠标。
+        results.append(option); // 将构造完成的选项加入结果列表。
+      }); // 列表完全来自当前筛选结果。
+      setState(filtered.length ? 'ready' : 'empty'); // 有结果和无结果走明确且互斥的状态。
+      results.scrollTop = 0; // 新查询从顶部展示，避免沿用旧的滚动位置。
+      select(0); // 新查询默认选择首项，让回车始终有可预期的目标。
+    } // 结束一次完整的搜索与状态同步。
+    function closePalette() { // 统一按钮、快捷键和指令执行后的关闭行为。
+      clearTimeout(loadingTimer); // 取消未完成的模拟加载，防止关闭后状态回跳。
+      setState('closed'); // 先更新状态，确保样式和辅助属性一致。
+      if (palette.open) palette.close(); // 使用原生关闭释放模态焦点约束。
+      if (returnFocus instanceof HTMLElement && returnFocus.isConnected) returnFocus.focus(); // 恢复打开前的焦点，保持键盘操作连续。
+    } // 关闭不会改动主题和列表密度等用户偏好。
+    function execute(index) { // 指令执行集中校验，避免加载中或空态误触发。
+      if (palette.dataset.state !== 'ready' || !filtered[index]) return; // 只允许执行当前可见的有效指令。
+      const command = filtered[index]; // 先保存所选指令，防止后续状态变化影响目标。
+      command.run(); // 执行这条指令真实对应的页面变化。
+      closePalette(); // 执行完成即收起面板，让结果回到主页面。
+      clearTimeout(toastTimer); // 新通知替换旧通知计时，避免提前消失。
+      toast.textContent = command.message; // 明确说明执行结果，让用户知道刚才发生了什么。
+      toast.dataset.state = 'visible'; // 通过状态属性显示非阻塞反馈。
+      toastTimer = setTimeout(() => { toast.dataset.state = 'hidden'; }, 3600); // 留出阅读时间后自动收起，避免长期遮挡页面。
+    } // 执行流程保持明确：动作、关闭、反馈。
+    function loadCommands() { // 用可配置延迟演示等待过程，无需依赖网络。
+      clearTimeout(loadingTimer); // 取消旧请求的模拟计时，保证只有一次加载在进行。
+      setState('loading'); // 立即显示反馈，避免点击后看起来没有响应。
+      search.focus(); // 加载时仍可输入，结束后会按最新关键词筛选。
+      const delay = Number(palette.dataset.loadingMs); // 从属性读取时长，便于直接修改 HTML 配置。
+      loadingTimer = setTimeout(() => { // 用异步计时模拟指令准备过程。
+        if (!palette.open) return; // 已关闭时不再更新隐藏面板。
+        setState('ready'); // 解除加载限制，允许渲染当前查询。
+        render(); // 使用最新输入生成结果，避免显示旧查询。
+      }, Number.isFinite(delay) && delay >= 0 ? delay : 800); // 对无效配置使用合理默认值，避免出现异常等待。
+    } // 加载态可以反复体验且能随时关闭。
+    function openPalette() { // 所有打开入口共用初始化流程。
+      if (palette.open) return; // 避免对已打开对话框重复初始化。
+      returnFocus = document.activeElement === document.body ? openButton : document.activeElement; // 自动打开时选择一个有意义的焦点返回点。
+      search.value = ''; // 每次打开从完整指令开始，避免用户困在旧搜索中。
+      search.placeholder = palette.dataset.placeholder; // 使用可配置提示文案，方便非程序员调整。
+      document.querySelector('#empty-title').textContent = palette.dataset.emptyTitle; // 空态标题同样直接读取 HTML 属性。
+      toast.dataset.state = 'hidden'; // 打开新一轮操作时收起旧反馈，减少干扰。
+      setState('ready'); // 显示前先解除关闭状态的隐藏样式。
+      palette.showModal(); // 利用原生对话框管理遮罩、焦点范围和背景不可交互行为。
+      render(); // 默认立即提供可执行结果，让首次体验更直接。
+      search.focus(); // 打开即可输入，不要求额外点击。
+    } // 打开不依赖外部服务或构建产物。
+    openButton.addEventListener('click', openPalette); // 为鼠标和触屏用户连接入口。
+    document.querySelector('#close-palette').addEventListener('click', closePalette); // 提供明确可见的关闭操作。
+    palette.addEventListener('cancel', event => { event.preventDefault(); closePalette(); }); // 接管原生 Esc 关闭，以同步清理计时器与状态。
+    palette.addEventListener('keydown', event => { // 补充首尾焦点循环，确保 Tab 不会暂时移到浏览器工具栏。
+      if (event.key !== 'Tab') return; // 只处理焦点切换，不干扰搜索和方向键。
+      const controls = Array.from(palette.querySelectorAll('button:not(:disabled), input')).filter(element => element.getClientRects().length); // 只收集当前状态中可见且可用的控件。
+      const first = controls[0], last = controls[controls.length - 1]; // 找到可交互范围的首尾边界。
+      if ((event.shiftKey && document.activeElement === first) || (!event.shiftKey && document.activeElement === last)) { // 仅在即将离开面板时接管默认行为。
+        event.preventDefault(); // 防止焦点从当前模态操作中丢失。
+        (event.shiftKey ? last : first).focus(); // 正向和反向切换都在可见控件之间循环。
+      } // 中间控件继续使用浏览器原生焦点顺序。
+    }); // 保持所有状态下的键盘操作连续。
+    search.addEventListener('input', render); // 输入即筛选，本地少量数据无需额外防抖逻辑。
+    search.addEventListener('keydown', event => { // 将候选导航限定在搜索框，避免干扰其他按钮。
+      if (event.isComposing || event.keyCode === 229) return; // 中文输入法选词期间不执行指令，避免回车误触。
+      if (palette.dataset.state !== 'ready') return; // 加载与空态没有可导航的结果。
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { // 只接管指令列表需要的方向键。
+        event.preventDefault(); // 阻止光标移动或页面滚动与列表导航冲突。
+        select(selectedIndex + (event.key === 'ArrowDown' ? 1 : -1), true); // 上下循环选择，并将当前项滚入可见区。
+      } else if (event.key === 'Enter') { // 回车表示确认当前候选项。
+        event.preventDefault(); // 避免浏览器额外触发表单默认行为。
+        execute(selectedIndex); // 与鼠标点击使用同一执行流程。
+      } // 其他按键继续保留输入框的默认编辑行为。
+    }); // 输入框完成键盘导航绑定。
+    document.addEventListener('keydown', event => { // 提供全局打开入口，方便熟练用户随时调用。
+      if (event.isComposing) return; // 输入法组合阶段不抢占按键。
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { // 同时支持 macOS 与 Windows 的常用组合键。
+        event.preventDefault(); // 在页面获得焦点时优先打开命令面板。
+        palette.open ? closePalette() : openPalette(); // 同一快捷键可以打开和收起，减少记忆负担。
+      } // 不拦截其他全局快捷键。
+    }); // 全局事件只绑定一次，避免重复触发。
+    document.querySelectorAll('[data-theme-toggle]').forEach(button => button.addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'))); // 所有主题按钮共享逻辑，确保显示与动作一致。
+    document.querySelector('#clear-search').addEventListener('click', () => { search.value = ''; render(); search.focus(); }); // 清空后立即恢复列表与输入焦点，形成可继续操作的闭环。
+    loadingButton.addEventListener('click', loadCommands); // 显式入口允许随时体验加载态。
+    document.querySelector('#demo-empty').addEventListener('click', () => { clearTimeout(loadingTimer); search.value = '没有这条指令'; setState('ready'); render(); search.focus(); }); // 使用真实无匹配搜索产生空态，而非伪造视觉结果。
+    if (palette.dataset.openOnStart === 'true') openPalette(); // 默认展示组件；改成 false 即可让页面启动时保持关闭。
+  </script> <!-- 脚本放在内容之后，确保节点已经存在再绑定交互。 -->
+</body> <!-- 结束可见页面与全部交互内容。 -->
+</html> <!-- 单文件到此完整结束，可以直接在浏览器打开。 -->
